@@ -55,6 +55,10 @@ class MeanAPEvaluator:
             logging.debug(f"evaluating average precision   image {i} / {len(self.dataset)}")
             image = self.dataset.get_image(i)
             boxes, labels, probs = self.predictor.predict(image)
+            if labels.nelement() == 0:
+                boxes = torch.zeros(1, 4, dtype=torch.float32)
+                labels = torch.ones(1, dtype=torch.int64)
+                probs = torch.zeros(1, dtype=torch.float32)
             indexes = torch.ones(labels.size(0), 1, dtype=torch.float32) * i
             results.append(torch.cat([
                 indexes.reshape(-1, 1),
